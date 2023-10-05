@@ -7,6 +7,7 @@ import { EmojiGameModule } from "./emoji-game/emoji-game.module";
 import { HeroModule } from "./hero/hero.module";
 import { MatchModule } from "./match/match.module";
 import { UserModule } from "./user/user.module";
+import { PrismaModule } from './prisma/prisma.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { UserModule } from "./user/user.module";
     UserModule,
     EmojiGameModule,
     MatchModule,
+    PrismaModule,
   ],
   controllers: [AppController],
   providers: [AppService],
