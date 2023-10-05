@@ -3,7 +3,9 @@ import { Body, Controller, Delete, Get, Param, Patch, Post } from "@nestjs/commo
 import { CreateMatchDto } from "./dto/create-match.dto";
 import { UpdateMatchDto } from "./dto/update-match.dto";
 import { MatchService } from "./match.service";
+import { ApiTags } from "@nestjs/swagger";
 
+@ApiTags("match")
 @Controller("match")
 export class MatchController {
   constructor(private readonly matchService: MatchService) {}

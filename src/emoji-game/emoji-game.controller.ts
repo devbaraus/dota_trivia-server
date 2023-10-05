@@ -1,9 +1,11 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post } from "@nestjs/common";
+import { ApiTags } from "@nestjs/swagger";
 
 import { CreateEmojiGameDto } from "./dto/create-emoji-game.dto";
 import { UpdateEmojiGameDto } from "./dto/update-emoji-game.dto";
 import { EmojiGameService } from "./emoji-game.service";
 
+@ApiTags("emoji-game")
 @Controller("emoji-game")
 export class EmojiGameController {
   constructor(private readonly emojiGameService: EmojiGameService) {}

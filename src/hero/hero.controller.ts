@@ -2,7 +2,9 @@ import { Body, Controller, Delete, Get, Param, Patch, Post } from "@nestjs/commo
 
 import { CreateHeroDto, UpdateHeroDto } from "./dto";
 import { HeroService } from "./hero.service";
+import { ApiTags } from "@nestjs/swagger";
 
+@ApiTags("hero")
 @Controller("hero")
 export class HeroController {
   constructor(private readonly heroService: HeroService) {}
