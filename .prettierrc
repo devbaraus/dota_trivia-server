@@ -5,7 +5,33 @@
   "bracketSpacing": true,
   "tabWidth": 2,
   "singleQuote": false,
-  "printWidth": 100,
+  "printWidth": 180,
+  "arrowParens": "avoid",
   "singleAttributePerLine": true,
-  "trailingComma": "all"
+  "trailingComma": "all",
+  "plugins": [
+    "@ianvs/prettier-plugin-sort-imports"
+  ],
+  "importOrder": [
+    "^(react/(.*)$)|^(react$)",
+    "^(next/(.*)$)|^(next$)",
+    "<THIRD_PARTY_MODULES>",
+    "",
+    "^types$",
+    "^@/types/(.*)$",
+    "^@/config/(.*)$",
+    "^@/lib/(.*)$",
+    "^@/hooks/(.*)$",
+    "^@/components/ui/(.*)$",
+    "^@/components/(.*)$",
+    "^@/styles/(.*)$",
+    "^@/app/(.*)$",
+    "",
+    "^[./]"
+  ],
+  "importOrderParserPlugins": [
+    "typescript",
+    "jsx",
+    "decorators-legacy"
+  ]
 }
