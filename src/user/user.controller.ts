@@ -1,12 +1,11 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 
-import { Roles } from "@/auth/decorator";
-import { Role } from "@/auth/enum";
+import { JwtGuard } from "@/auth/guard";
 import { CreateUserDto, UpdateUserDto } from "@/user/dto";
 import { UserService } from "@/user/user.service";
 
-@Roles(Role.ADMIN)
+@UseGuards(JwtGuard)
 @ApiTags("users")
 @Controller("users")
 export class UserController {
