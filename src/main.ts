@@ -1,9 +1,11 @@
-import { ValidationPipe } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import * as morgan from "morgan";
+import { patchNestJsSwagger, ZodSerializerInterceptor, ZodValidationPipe } from "nestjs-zod";
 
 import { AppModule } from "./app.module";
+
+patchNestJsSwagger();
 
 const PORT = process.env.PORT || 4000;
 
@@ -18,15 +20,7 @@ async function bootstrap() {
   app.enableCors();
   app.use(morgan("tiny"));
 
-  app.useGlobalPipes(
-    new ValidationPipe({
-      whitelist: true,
-      transform: true,
-      transformOptions: {
-        enableImplicitConversion: true,
-      },
-    }),
-  );
+  app.useGlobalPipes(new ZodValidationPipe());
 
   await app.listen(PORT);
   console.log(`Listening on port http://localhost:${PORT}`);

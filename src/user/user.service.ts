@@ -3,7 +3,8 @@ import { ConfigService } from "@nestjs/config";
 import { Prisma } from "@prisma/client";
 import * as argon from "argon2";
 
-import { CreateUserDto, UpdateUserDto } from "@/user/dto";
+import { RegisterAuthType } from "@/auth/type";
+import { UpdateUserDto } from "@/user/dto";
 import { User } from "@/user/entity";
 import { UserRepository } from "@/user/user.repository";
 
@@ -14,25 +15,20 @@ export class UserService {
     private config: ConfigService,
   ) {}
 
-  private removePasswordHash(user: User) {
-    const { passwordHash, ...userWithoutPasswordHash } = user;
-    return userWithoutPasswordHash;
-  }
-
-  async create(createUserDto: CreateUserDto) {
+  async create(dto: RegisterAuthType) {
     try {
-      const hash = await argon.hash(createUserDto.password, {
+      const hash = await argon.hash(dto.password, {
         secret: Buffer.from(this.config.get("APP_SECRET")),
       });
 
-      delete createUserDto.password;
+      delete dto.password;
 
-      const user = await this.userRepository.create({
-        ...createUserDto,
+      const data = {
+        ...dto,
         passwordHash: hash,
-      });
+      };
 
-      return this.removePasswordHash(user);
+      return await this.userRepository.create(data as Prisma.UserCreateInput);
     } catch (error) {
       if (error instanceof Prisma.PrismaClientValidationError) {
         throw new BadRequestException(error);
@@ -43,9 +39,7 @@ export class UserService {
   }
 
   async findAll(skip?: number, take?: number, where?: unknown, order?: unknown) {
-    const users = await this.userRepository.findAll(skip, take, where, order);
-
-    return users.map(user => this.removePasswordHash(user));
+    return this.userRepository.findAll(skip, take, where, order);
   }
 
   async findOne(id: number) {
@@ -55,12 +49,11 @@ export class UserService {
       throw new NotFoundException("User not found");
     }
 
-    return this.removePasswordHash(user);
+    return user;
   }
 
-  async update(id: number, entity: UpdateUserDto) {
-    const user = await this.userRepository.update(id, entity);
-    return this.removePasswordHash(user);
+  async update(id: number, dto: UpdateUserDto) {
+    return this.userRepository.update(id, dto);
   }
 
   async remove(id: number): Promise<null> {

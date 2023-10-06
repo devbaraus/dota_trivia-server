@@ -1,35 +1,65 @@
-import { Injectable } from "@nestjs/common";
+import { ConflictException, Injectable } from "@nestjs/common";
 import { Prisma } from "@prisma/client";
 
 import { PrismaService } from "@/prisma/prisma.service";
+import { User } from "@/user/entity";
 
 @Injectable()
 export class UserRepository {
   constructor(private prismaService: PrismaService) {}
 
+  private omitPasswordHash(user: User) {
+    const { passwordHash, ...userWithoutPasswordHash } = user;
+    return userWithoutPasswordHash;
+  }
+
   async create(data: Prisma.UserCreateInput) {
-    return this.prismaService.user.create({ data });
+    try {
+      const user = await this.prismaService.user.create({ data });
+      return this.omitPasswordHash(user);
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        if (error.code === "P2002") {
+          throw new ConflictException("Credentials already exists.");
+        }
+      }
+      throw error; // Re-throw other unexpected errors
+    }
   }
 
   async findAll(skip?: number, take?: number, where?: Prisma.UserWhereInput, orderBy?: Prisma.UserOrderByWithRelationInput) {
-    return this.prismaService.user.findMany({
+    const users = await this.prismaService.user.findMany({
       skip,
       take,
       where,
       orderBy,
     });
+
+    return users.map(user => this.omitPasswordHash(user));
   }
 
-  findOne(id: number) {
-    return this.prismaService.user.findUnique({ where: { id } });
+  async findOne(id: number) {
+    const user = await this.prismaService.user.findUnique({ where: { id } });
+
+    if (!user) {
+      return null;
+    }
+
+    return this.omitPasswordHash(user);
   }
 
-  findByUsername(username: string) {
-    return this.prismaService.user.findUnique({
+  async findByUsername(username: string) {
+    const user = await this.prismaService.user.findUnique({
       where: {
         username,
       },
     });
+
+    if (!user) {
+      return null;
+    }
+
+    return this.omitPasswordHash(user);
   }
 
   async remove(id: number) {
@@ -37,10 +67,12 @@ export class UserRepository {
     return null;
   }
 
-  update(id: number, entity: Prisma.UserUpdateInput) {
-    return this.prismaService.user.update({
+  async update(id: number, data: Prisma.UserUpdateInput) {
+    const user = await this.prismaService.user.update({
       where: { id },
-      data: entity,
+      data,
     });
+
+    return this.omitPasswordHash(user);
   }
 }
