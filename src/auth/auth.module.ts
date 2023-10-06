@@ -6,6 +6,7 @@ import { AuthService } from "@/auth/auth.service";
 import { JwtStrategy } from "@/auth/strategy";
 import { UserModule } from "@/user/user.module";
 import { UserRepository } from "@/user/user.repository";
+import { UserService } from "@/user/user.service";
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { UserRepository } from "@/user/user.repository";
     AuthService,
     JwtStrategy,
     UserRepository,
+    UserService,
     // {
     //   provide: APP_GUARD,
     //   useClass: JwtGuard,

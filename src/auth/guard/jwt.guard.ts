@@ -38,11 +38,7 @@ export class JwtGuard extends AuthGuard("jwt") {
         secret: this.config.get("JWT_SECRET"),
       });
 
-      const payloadUser = await this.userRepository.findOne(payload.sub);
-
-      const { passwordHash, ...result } = payloadUser;
-
-      request["user"] = result;
+      request["user"] = await this.userRepository.findOne(payload.sub);
     } catch {
       throw new UnauthorizedException();
     }

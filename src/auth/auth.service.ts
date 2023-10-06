@@ -3,19 +3,19 @@ import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
 import * as argon from "argon2";
 
+import { PrismaService } from "@/prisma/prisma.service";
 import { User } from "@/user/entity";
-import { UserRepository } from "@/user/user.repository";
 
 @Injectable()
 export class AuthService {
   constructor(
-    private userRepository: UserRepository,
+    private prismaService: PrismaService,
     private jwt: JwtService,
     private config: ConfigService,
   ) {}
 
   async signIn(username: string, password: string): Promise<any> {
-    const user = await this.userRepository.findByUsername(username);
+    const user = await this.prismaService.user.findUniqueOrThrow({ where: { username } });
 
     if (!user) {
       throw new ForbiddenException("Invalid credentials");
