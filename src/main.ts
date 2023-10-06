@@ -1,3 +1,4 @@
+import { ValidationPipe } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import * as morgan from "morgan";
@@ -9,16 +10,23 @@ const PORT = process.env.PORT || 4000;
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  const config = new DocumentBuilder()
-    .setTitle("Dota Trivia")
-    .setDescription("The Dota Trivia API description")
-    .setVersion("0.1")
-    .build();
+  const config = new DocumentBuilder().setTitle("Dota Trivia").setDescription("The Dota Trivia API description").setVersion("0.1").build();
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup("api", app, document);
+  SwaggerModule.setup("", app, document);
 
+  app.enableCors();
   app.use(morgan("tiny"));
+
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      transform: true,
+      transformOptions: {
+        enableImplicitConversion: true,
+      },
+    }),
+  );
 
   await app.listen(PORT);
   console.log(`Listening on port http://localhost:${PORT}`);
