@@ -1,13 +1,15 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post } from "@nestjs/common";
-
-import { CreateUserDto } from "./dto/create-user.dto";
-import { UpdateUserDto } from "./dto/update-user.dto";
-import { UserService } from "./user.service";
+import { Body, Controller, Delete, Get, Param, Post, Put } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 
-@ApiTags("user")
-@Controller("user")
-export class UserController {
+import { Role, Roles } from "../auth";
+import { CoreController } from "../core";
+import { CreateUserDto, UpdateUserDto } from "./dto";
+import { UserService } from "./user.service";
+
+@Roles(Role.ADMIN)
+@ApiTags("users")
+@Controller("users")
+export class UserController implements CoreController {
   constructor(private readonly userService: UserService) {}
 
   @Post()
@@ -25,9 +27,9 @@ export class UserController {
     return this.userService.findOne(+id);
   }
 
-  @Patch(":id")
+  @Put(":id")
   update(@Param("id") id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.update(+id, updateUserDto);
+    return this.userService.update(Number(id), updateUserDto);
   }
 
   @Delete(":id")

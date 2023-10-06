@@ -1,27 +1,70 @@
-import { Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
+import { Prisma } from "@prisma/client";
+import * as argon from "argon2";
 
-import { CreateUserDto } from "./dto/create-user.dto";
-import { UpdateUserDto } from "./dto/update-user.dto";
+import { CoreService } from "../core/core.service";
+import { CreateUserDto, UpdateUserDto } from "./dto";
+import { User } from "./entity";
+import { UserRepository } from "./user.repository";
 
 @Injectable()
-export class UserService {
-  create(createUserDto: CreateUserDto) {
-    return "This action adds a new user";
+export class UserService implements CoreService<Omit<User, "passwordHash">> {
+  constructor(
+    private userRepository: UserRepository,
+    private config: ConfigService,
+  ) {}
+
+  private removePasswordHash(user: User) {
+    const { passwordHash, ...userWithoutPasswordHash } = user;
+    return userWithoutPasswordHash;
   }
 
-  findAll() {
-    return `This action returns all user`;
+  async create(createUserDto: CreateUserDto) {
+    try {
+      const hash = await argon.hash(createUserDto.password, {
+        secret: Buffer.from(this.config.get("APP_SECRET")),
+      });
+
+      delete createUserDto.password;
+
+      const user = await this.userRepository.create({
+        ...createUserDto,
+        passwordHash: hash,
+      });
+
+      return this.removePasswordHash(user);
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientValidationError) {
+        throw new BadRequestException(error);
+      }
+
+      throw error;
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findAll(skip?: number, take?: number, where?: unknown, order?: unknown) {
+    const users = await this.userRepository.findAll(skip, take, where, order);
+
+    return users.map(user => this.removePasswordHash(user));
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async findOne(id: number) {
+    const user = await this.userRepository.findOne(id);
+
+    if (!user) {
+      throw new NotFoundException("User not found");
+    }
+
+    return this.removePasswordHash(user);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async update(id: number, entity: UpdateUserDto) {
+    const user = await this.userRepository.update(id, entity);
+    return this.removePasswordHash(user);
+  }
+
+  async remove(id: number): Promise<null> {
+    return this.userRepository.remove(id);
   }
 }
