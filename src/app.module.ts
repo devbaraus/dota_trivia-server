@@ -14,13 +14,9 @@ import { PrismaModule } from './prisma/prisma.module';
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-    HeroModule,
-    UserModule,
-    EmojiGameModule,
-    MatchModule,
     PrismaModule,
+    UserModule,
   ],
-  controllers: [AppController],
   providers: [AppService],
 })
 export class AppModule {}
