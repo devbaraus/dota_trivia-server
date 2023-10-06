@@ -1,10 +1,4 @@
-import { AppAbility } from "./casl-ability.factory";
-
-export * from "./casl.module";
-export * from "./casl-ability.factory";
-export * from "./enum";
-export * from "./guard";
-export * from "./decorator";
+import { AppAbility } from "@/casl/casl-ability.factory";
 
 interface IPolicyHandler {
   handle(ability: AppAbility): boolean;

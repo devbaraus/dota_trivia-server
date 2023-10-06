@@ -3,13 +3,12 @@ import { ConfigService } from "@nestjs/config";
 import { Prisma } from "@prisma/client";
 import * as argon from "argon2";
 
-import { CoreService } from "../core/core.service";
-import { CreateUserDto, UpdateUserDto } from "./dto";
-import { User } from "./entity";
-import { UserRepository } from "./user.repository";
+import { CreateUserDto, UpdateUserDto } from "@/user/dto";
+import { User } from "@/user/entity";
+import { UserRepository } from "@/user/user.repository";
 
 @Injectable()
-export class UserService implements CoreService<Omit<User, "passwordHash">> {
+export class UserService {
   constructor(
     private userRepository: UserRepository,
     private config: ConfigService,

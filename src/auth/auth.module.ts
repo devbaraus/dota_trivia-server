@@ -1,10 +1,11 @@
 import { Module } from "@nestjs/common";
 import { JwtModule } from "@nestjs/jwt";
 
-import { UserModule } from "../user";
-import { AuthController } from "./auth.controller";
-import { AuthService } from "./auth.service";
-import { JwtStrategy } from "./strategy";
+import { AuthController } from "@/auth/auth.controller";
+import { AuthService } from "@/auth/auth.service";
+import { JwtStrategy } from "@/auth/strategy";
+import { UserModule } from "@/user/user.module";
+import { UserRepository } from "@/user/user.repository";
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { JwtStrategy } from "./strategy";
   providers: [
     AuthService,
     JwtStrategy,
+    UserRepository,
     // {
     //   provide: APP_GUARD,
     //   useClass: JwtGuard,

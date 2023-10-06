@@ -1,15 +1,15 @@
 import { Body, Controller, Delete, Get, Param, Post, Put } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 
-import { Role, Roles } from "../auth";
-import { CoreController } from "../core";
-import { CreateUserDto, UpdateUserDto } from "./dto";
-import { UserService } from "./user.service";
+import { Roles } from "@/auth/decorator";
+import { Role } from "@/auth/enum";
+import { CreateUserDto, UpdateUserDto } from "@/user/dto";
+import { UserService } from "@/user/user.service";
 
 @Roles(Role.ADMIN)
 @ApiTags("users")
 @Controller("users")
-export class UserController implements CoreController {
+export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post()

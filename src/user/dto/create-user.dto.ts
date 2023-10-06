@@ -1,7 +1,7 @@
 import { Exclude } from "class-transformer";
 import { IsDate, IsEmail, IsNotEmpty, IsOptional, IsString, IsStrongPassword, MaxLength, MinLength } from "class-validator";
 
-import { User } from "../entity";
+import { User } from "@/user/entity";
 
 export class CreateUserDto implements Omit<User, "passwordHash" | "createdAt" | "updatedAt" | "roles"> {
   @Exclude()

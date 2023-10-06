@@ -1,12 +1,10 @@
 import { Injectable } from "@nestjs/common";
 import { Prisma } from "@prisma/client";
 
-import { CoreRepository } from "../core/core.repository";
-import { PrismaService } from "../prisma";
-import { User } from "./entity";
+import { PrismaService } from "@/prisma/prisma.service";
 
 @Injectable()
-export class UserRepository implements CoreRepository<User> {
+export class UserRepository {
   constructor(private prismaService: PrismaService) {}
 
   async create(data: Prisma.UserCreateInput) {
