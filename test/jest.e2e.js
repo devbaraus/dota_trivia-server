@@ -6,5 +6,5 @@ module.exports = {
   transform: {
     "^.+\\.(t|j)s$": "ts-jest",
   },
-  coverageDirectory: "./test/coverage",
+  coverageDirectory: "./coverage",
 };
