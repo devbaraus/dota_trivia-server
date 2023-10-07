@@ -22,14 +22,140 @@ enum Role {
   PLAYER
 }
 
+enum MiniGame {
+  EMOJI_HERO
+}
+
+enum GameStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum MatchStatus {
+  STARTED
+  FINISHED_WIN
+  FINISHED_LOSE
+}
+
+enum HeroAttr {
+  STR
+  AGI
+  INT
+  UNI
+}
+
 model User {
-  id           Int       @id @default(autoincrement())
-  username     String    @unique
-  dateBirth    DateTime? @db.Date
-  email        String    @unique
-  passwordHash String
-  avatar       String?
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
-  roles        Role[]    @default([GUEST])
+  id                      Int             @id @default(autoincrement())
+  username                String          @unique
+  dateBirth               DateTime?       @db.Date
+  email                   String          @unique
+  passwordHash            String
+  avatar                  String?
+  createdAt               DateTime        @default(now())
+  updatedAt               DateTime        @updatedAt
+  roles                   Role[]          @default([GUEST])
+  gamesCreatedBy          Game[]          @relation("CreatedByUser")
+  gamesUpdatedBy          Game[]          @relation("UpdatedByUser")
+  emojiHeroGamesCreatedBy EmojiHeroGame[] @relation("CreatedByUser")
+  emojiHeroGamesUpdatedBy EmojiHeroGame[] @relation("UpdatedByUser")
+  matches                 Match[]
+  quoteHeroGamesCreatedBy QuoteHeroGame[] @relation("CreatedByUser")
+  quoteHeroGamesUpdatedBy QuoteHeroGame[] @relation("UpdatedByUser")
+
+  @@map("users")
+}
+
+model Hero {
+  id             Int             @id @default(autoincrement())
+  dotaId         Int             @unique
+  name           String
+  dotaName       String
+  mainAttr       HeroAttr
+  avatar         String?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  emojiHeroGames EmojiHeroGame[]
+  quoteHeroGames QuoteHeroGame[]
+
+  @@map("heroes")
+}
+
+model Game {
+  id             Int             @id @default(autoincrement())
+  name           String
+  description    String
+  type           MiniGame        @unique
+  status         GameStatus      @default(INACTIVE)
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  createdBy      User            @relation("CreatedByUser", fields: [createdById], references: [id])
+  createdById    Int
+  updatedBy      User?           @relation("UpdatedByUser", fields: [updatedById], references: [id])
+  updatedById    Int?
+  emojiHeroGames EmojiHeroGame[]
+  quoteHeroGames QuoteHeroGame[]
+
+  @@map("games")
+}
+
+model EmojiHeroGame {
+  id          Int      @id @default(autoincrement())
+  heroId      Int
+  hero        Hero     @relation(fields: [heroId], references: [id])
+  gameId      Int
+  game        Game     @relation(fields: [gameId], references: [id])
+  emojis      String[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  createdBy   User     @relation("CreatedByUser", fields: [createdById], references: [id])
+  createdById Int
+  updatedBy   User?    @relation("UpdatedByUser", fields: [updatedById], references: [id])
+  updatedById Int?
+  matches     Match[]
+
+  @@map("emojiHeroGames")
+}
+
+model QuoteHeroGame {
+  id          Int      @id @default(autoincrement())
+  heroId      Int
+  hero        Hero     @relation(fields: [heroId], references: [id])
+  gameId      Int
+  game        Game     @relation(fields: [gameId], references: [id])
+  quote       String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  createdBy   User     @relation("CreatedByUser", fields: [createdById], references: [id])
+  createdById Int
+  updatedBy   User?    @relation("UpdatedByUser", fields: [updatedById], references: [id])
+  updatedById Int?
+  matches     Match[]
+
+  @@map("quoteHeroGames")
+}
+
+model Match {
+  id              Int            @id @default(autoincrement())
+  emojiHeroGameId Int
+  emojiHeroGame   EmojiHeroGame  @relation(fields: [emojiHeroGameId], references: [id])
+  userId          Int
+  user            User           @relation(fields: [userId], references: [id])
+  status          MatchStatus    @default(STARTED)
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  matchAttempts   MatchAttempt[]
+  quoteHeroGame   QuoteHeroGame? @relation(fields: [quoteHeroGameId], references: [id])
+  quoteHeroGameId Int?
+
+  @@map("matches")
+}
+
+model MatchAttempt {
+  id        Int      @id @default(autoincrement())
+  matchId   Int
+  match     Match    @relation(fields: [matchId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("matchAttempts")
 }
