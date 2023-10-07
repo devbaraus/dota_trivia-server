@@ -15,6 +15,7 @@ lerna-debug.log*
 .DS_Store
 
 # Tests
+test/coverage/
 /coverage
 /.nyc_output
 
@@ -37,3 +38,5 @@ lerna-debug.log*
 # ENV files
 .env*
 !.env.example
+
+
