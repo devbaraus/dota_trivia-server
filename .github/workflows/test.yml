@@ -1,0 +1,52 @@
+name: E2E Tests
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    name: Run E2E Tests
+    runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: "postgresql://dtrivia:dtrivia@localhost:5432/dtrivia?schema=public"
+      APP_SECRET: "secret"
+      JWT_SECRET: "secret"
+      JWT_EXPIRES_IN: "1d"
+
+    services:
+      postgres:
+        image: postgres:12
+        env:
+          POSTGRES_USER: dtrivia
+          POSTGRES_PASSWORD: dtrivia
+          POSTGRES_DB: dtrivia
+        ports:
+          - 5432:5432
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 18.x
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm run test
+
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v3
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        with:
+          directory: ./test/coverage
+          name: codecov-umbrella
+          fail_ci_if_error: true
+          verbose: true
