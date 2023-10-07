@@ -1,5 +1,5 @@
 -- CreateEnum
-CREATE TYPE "Role" AS ENUM ('admin', 'guest', 'player');
+CREATE TYPE "Role" AS ENUM ('ADMIN', 'GUEST', 'PLAYER');
 
 -- CreateTable
 CREATE TABLE "User" (
@@ -11,7 +11,7 @@ CREATE TABLE "User" (
     "avatar" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
-    "roles" "Role"[] DEFAULT ARRAY['guest']::"Role"[],
+    "roles" "Role"[] DEFAULT ARRAY['GUEST']::"Role"[],
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );

@@ -17,9 +17,9 @@ datasource db {
 }
 
 enum Role {
-  admin
-  guest
-  player
+  ADMIN
+  GUEST
+  PLAYER
 }
 
 model User {
@@ -31,5 +31,5 @@ model User {
   avatar       String?
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
-  roles        Role[]    @default([guest])
+  roles        Role[]    @default([GUEST])
 }
