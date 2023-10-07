@@ -3,10 +3,9 @@ import { ConfigService } from "@nestjs/config";
 import { Prisma } from "@prisma/client";
 import * as argon from "argon2";
 
-import { RegisterAuthType } from "@/auth/type";
-import { UpdateUserDto } from "@/user/dto";
-import { User } from "@/user/entity";
-import { UserRepository } from "@/user/user.repository";
+import { RegisterAuthType } from "../auth/type";
+import { UpdateUserDto } from "./dto";
+import { UserRepository } from "./user.repository";
 
 @Injectable()
 export class UserService {

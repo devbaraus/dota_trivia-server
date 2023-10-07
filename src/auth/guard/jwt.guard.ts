@@ -3,11 +3,11 @@ import { ConfigService } from "@nestjs/config";
 import { Reflector } from "@nestjs/core";
 import { JwtService } from "@nestjs/jwt";
 import { AuthGuard } from "@nestjs/passport";
+import { Role } from "@prisma/client";
 import { Request } from "express";
 
-import { IS_PUBLIC_KEY, ROLES_KEY } from "@/auth/decorator";
-import { Role } from "@/auth/enum";
-import { UserRepository } from "@/user/user.repository";
+import { UserRepository } from "../../user/user.repository";
+import { IS_PUBLIC_KEY, ROLES_KEY } from "../decorator";
 
 @Injectable()
 export class JwtGuard extends AuthGuard("jwt") {

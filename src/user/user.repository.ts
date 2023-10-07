@@ -1,8 +1,7 @@
 import { ConflictException, Injectable } from "@nestjs/common";
-import { Prisma } from "@prisma/client";
+import { Prisma, User } from "@prisma/client";
 
-import { PrismaService } from "@/prisma/prisma.service";
-import { User } from "@/user/entity";
+import { PrismaService } from "../prisma/prisma.service";
 
 @Injectable()
 export class UserRepository {

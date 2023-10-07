@@ -1,10 +1,10 @@
 import { Body, Controller, Post } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
+import { Role } from "@prisma/client";
 
-import { AuthService } from "@/auth/auth.service";
-import { LoginAuthDto, RegisterAuthDto } from "@/auth/dto";
-import { Role } from "@/auth/enum";
-import { UserService } from "@/user/user.service";
+import { UserService } from "../user/user.service";
+import { AuthService } from "./auth.service";
+import { LoginAuthDto, RegisterAuthDto } from "./dto";
 
 @ApiTags("auth")
 @Controller("auth")

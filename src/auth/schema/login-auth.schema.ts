@@ -1,5 +1,6 @@
 import { z } from "nestjs-zod/z";
-import { UserZod } from "src/user/zod";
+
+import { UserZod } from "../../user/zod";
 
 export const LoginAuthSchema = z.object({
   username: UserZod.username,

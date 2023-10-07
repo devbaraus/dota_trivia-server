@@ -1,9 +1,8 @@
 import { AbilityBuilder, AbilityClass, ExtractSubjectType, InferSubjects, PureAbility } from "@casl/ability";
 import { Injectable } from "@nestjs/common";
+import { Role, User } from "@prisma/client";
 
-import { Role } from "@/auth/enum";
-import { Action } from "@/casl/enum";
-import { User } from "@/user/entity";
+import { Action } from "./enum";
 
 type Subjects = InferSubjects<User> | "all";
 

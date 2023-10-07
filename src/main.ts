@@ -1,7 +1,7 @@
 import { NestFactory } from "@nestjs/core";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import * as morgan from "morgan";
-import { patchNestJsSwagger, ZodSerializerInterceptor, ZodValidationPipe } from "nestjs-zod";
+import { patchNestJsSwagger, ZodValidationPipe } from "nestjs-zod";
 
 import { AppModule } from "./app.module";
 
@@ -15,7 +15,9 @@ async function bootstrap() {
   const config = new DocumentBuilder().setTitle("Dota Trivia").setDescription("The Dota Trivia API description").setVersion("0.1").build();
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup("", app, document);
+  SwaggerModule.setup("", app, document, {
+    jsonDocumentUrl: "/api-json",
+  });
 
   app.enableCors();
   app.use(morgan("tiny"));

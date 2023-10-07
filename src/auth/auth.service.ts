@@ -1,10 +1,10 @@
 import { ForbiddenException, Injectable, UnauthorizedException } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
+import { User } from "@prisma/client";
 import * as argon from "argon2";
 
-import { PrismaService } from "@/prisma/prisma.service";
-import { User } from "@/user/entity";
+import { PrismaService } from "../prisma/prisma.service";
 
 @Injectable()
 export class AuthService {
@@ -15,7 +15,7 @@ export class AuthService {
   ) {}
 
   async signIn(username: string, password: string): Promise<any> {
-    const user = await this.prismaService.user.findUniqueOrThrow({ where: { username } });
+    const user = await this.prismaService.user.findUnique({ where: { username } });
 
     if (!user) {
       throw new ForbiddenException("Invalid credentials");
