@@ -5,7 +5,7 @@ import { PrismaService } from "../src/prisma/prisma.service";
 
 export const AuthTest = (app: INestApplication, prisma: PrismaService, pactum: any) =>
   describe("Auth Controller (e2e)", () => {
-    const UserFactory = () => ({
+    const UserRegisterFactory = () => ({
       email: faker.internet.email(),
       password: faker.internet.password({
         length: 10,
@@ -20,7 +20,8 @@ export const AuthTest = (app: INestApplication, prisma: PrismaService, pactum: a
       avatar: faker.image.avatar(),
     });
 
-    const usermock = UserFactory();
+    const mockCreateUser = UserRegisterFactory();
+    const mockLoginUser = { username: mockCreateUser.username, password: mockCreateUser.password };
 
     describe("POST /auth/register", () => {
       it("Should throw if no email", async () => {
@@ -28,7 +29,7 @@ export const AuthTest = (app: INestApplication, prisma: PrismaService, pactum: a
           .spec()
           .post("/auth/register")
           .withJson({
-            ...UserFactory(),
+            ...UserRegisterFactory(),
             email: undefined,
           })
           .expectStatus(400)
@@ -40,7 +41,7 @@ export const AuthTest = (app: INestApplication, prisma: PrismaService, pactum: a
           .spec()
           .post("/auth/register")
           .withJson({
-            ...UserFactory(),
+            ...UserRegisterFactory(),
             username: undefined,
           })
           .expectStatus(400)
@@ -52,7 +53,7 @@ export const AuthTest = (app: INestApplication, prisma: PrismaService, pactum: a
           .spec()
           .post("/auth/register")
           .withJson({
-            ...UserFactory(),
+            ...UserRegisterFactory(),
             password: undefined,
           })
           .expectStatus(400)
@@ -64,7 +65,7 @@ export const AuthTest = (app: INestApplication, prisma: PrismaService, pactum: a
           .spec()
           .post("/auth/register")
           .withJson({
-            ...UserFactory(),
+            ...UserRegisterFactory(),
             dateBirth: faker.date.past().toISOString(),
           })
           .expectStatus(400)
@@ -76,7 +77,7 @@ export const AuthTest = (app: INestApplication, prisma: PrismaService, pactum: a
           .spec()
           .post("/auth/register")
           .withJson({
-            ...UserFactory(),
+            ...UserRegisterFactory(),
             dateBirth: faker.date.future().toISOString().slice(0, 10),
           })
           .expectStatus(400)
@@ -88,7 +89,7 @@ export const AuthTest = (app: INestApplication, prisma: PrismaService, pactum: a
           .spec()
           .post("/auth/register")
           .withJson({
-            ...UserFactory(),
+            ...UserRegisterFactory(),
             email: faker.person.fullName(),
           })
           .expectStatus(400)
@@ -100,7 +101,7 @@ export const AuthTest = (app: INestApplication, prisma: PrismaService, pactum: a
           .spec()
           .post("/auth/register")
           .withJson({
-            ...UserFactory(),
+            ...UserRegisterFactory(),
             username: faker.lorem.paragraph(100),
           })
           .expectStatus(400)
@@ -112,7 +113,7 @@ export const AuthTest = (app: INestApplication, prisma: PrismaService, pactum: a
           .spec()
           .post("/auth/register")
           .withJson({
-            ...UserFactory(),
+            ...UserRegisterFactory(),
             username: "ab",
           })
           .expectStatus(400)
@@ -124,7 +125,7 @@ export const AuthTest = (app: INestApplication, prisma: PrismaService, pactum: a
           .spec()
           .post("/auth/register")
           .withJson({
-            ...UserFactory(),
+            ...UserRegisterFactory(),
             password: faker.lorem.paragraph(100),
           })
           .expectStatus(400)
@@ -136,7 +137,7 @@ export const AuthTest = (app: INestApplication, prisma: PrismaService, pactum: a
           .spec()
           .post("/auth/register")
           .withJson({
-            ...UserFactory(),
+            ...UserRegisterFactory(),
             password: faker.internet.password({
               length: 3,
             }),
@@ -150,7 +151,7 @@ export const AuthTest = (app: INestApplication, prisma: PrismaService, pactum: a
           .spec()
           .post("/auth/register")
           .withJson({
-            ...UserFactory(),
+            ...UserRegisterFactory(),
             avatar: faker.person.fullName(),
           })
           .expectStatus(400)
@@ -162,7 +163,7 @@ export const AuthTest = (app: INestApplication, prisma: PrismaService, pactum: a
           .spec()
           .post("/auth/register")
           .withJson({
-            ...UserFactory(),
+            ...UserRegisterFactory(),
             dateBirth: undefined,
           })
           .expectStatus(201)
@@ -174,7 +175,7 @@ export const AuthTest = (app: INestApplication, prisma: PrismaService, pactum: a
           .spec()
           .post("/auth/register")
           .withJson({
-            ...UserFactory(),
+            ...UserRegisterFactory(),
             avatar: undefined,
           })
           .expectStatus(201)
@@ -182,7 +183,7 @@ export const AuthTest = (app: INestApplication, prisma: PrismaService, pactum: a
       });
 
       it("Should register with email, password and username", async () => {
-        const user = UserFactory();
+        const user = UserRegisterFactory();
 
         return pactum
           .spec()
@@ -200,13 +201,128 @@ export const AuthTest = (app: INestApplication, prisma: PrismaService, pactum: a
         return pactum
           .spec()
           .post("/auth/register")
-          .withJson({ ...UserFactory(), blabla: true })
+          .withJson({ ...UserRegisterFactory(), blabla: true })
           .expectStatus(201)
           .toss();
       });
 
       it("Should register if complete", async () => {
-        return pactum.spec().post("/auth/register").withJson(UserFactory()).expectStatus(201).toss();
+        return pactum.spec().post("/auth/register").withJson(mockCreateUser).expectStatus(201).toss();
+      });
+    });
+
+    describe("POST /auth/login", () => {
+      it("Should throw if no username", async () => {
+        return pactum
+          .spec()
+          .post("/auth/login")
+          .withJson({
+            ...mockLoginUser,
+            username: undefined,
+          })
+          .expectStatus(400)
+          .toss();
+      });
+
+      it("Should throw if no password", async () => {
+        return pactum
+          .spec()
+          .post("/auth/login")
+          .withJson({
+            ...mockLoginUser,
+            password: undefined,
+          })
+          .expectStatus(400)
+          .toss();
+      });
+
+      it("Should throw if long username", async () => {
+        return pactum
+          .spec()
+          .post("/auth/login")
+          .withJson({
+            ...mockLoginUser,
+            username: faker.lorem.paragraph(100),
+          })
+          .expectStatus(400)
+          .toss();
+      });
+
+      it("Should throw if short username", async () => {
+        return pactum
+          .spec()
+          .post("/auth/login")
+          .withJson({
+            ...mockLoginUser,
+            username: "ab",
+          })
+          .expectStatus(400)
+          .toss();
+      });
+
+      it("Should throw if long password", async () => {
+        return pactum
+          .spec()
+          .post("/auth/login")
+          .withJson({
+            ...mockLoginUser,
+            password: faker.lorem.paragraph(100),
+          })
+          .expectStatus(400)
+          .toss();
+      });
+
+      it("Should throw if wrong username", async () => {
+        return pactum
+          .spec()
+          .post("/auth/login")
+          .withJson({
+            ...mockLoginUser,
+            username: faker.internet.userName(),
+          })
+          .expectStatus(401)
+          .toss();
+      });
+
+      it("Should throw if wrong password", async () => {
+        return pactum
+          .spec()
+          .post("/auth/login")
+          .withJson({
+            ...mockLoginUser,
+            password: faker.internet.password({
+              length: 10,
+            }),
+          })
+          .expectStatus(401)
+          .toss();
+      });
+
+      it("Should throw if short password", async () => {
+        return pactum
+          .spec()
+          .post("/auth/login")
+          .withJson({
+            ...mockLoginUser,
+            password: faker.internet.password({
+              length: 3,
+            }),
+          })
+          .expectStatus(400)
+          .toss();
+      });
+
+      it("Should login if extra field", async () => {
+        return pactum
+          .spec()
+          .post("/auth/login")
+          .withJson({ ...mockLoginUser, blabla: true })
+          .expectStatus(200)
+          .toss();
+      });
+
+      it("Should login if complete", async () => {
+        return pactum.spec().post("/auth/login").withJson(mockLoginUser).expectStatus(200).toss();
       });
     });
   });

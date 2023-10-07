@@ -1,4 +1,4 @@
-import { ForbiddenException, Injectable, UnauthorizedException } from "@nestjs/common";
+import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
 import { User } from "@prisma/client";
@@ -18,12 +18,14 @@ export class AuthService {
     const user = await this.prismaService.user.findUnique({ where: { username } });
 
     if (!user) {
-      throw new ForbiddenException("Invalid credentials");
+      throw new UnauthorizedException();
     }
 
-    const valid = await argon.verify(user.passwordHash, password);
+    const valid = await argon.verify(user.passwordHash, password, {
+      secret: Buffer.from(this.config.get("APP_SECRET")),
+    });
 
-    if (valid) {
+    if (!valid) {
       throw new UnauthorizedException();
     }
 
