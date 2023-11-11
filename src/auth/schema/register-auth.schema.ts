@@ -6,6 +6,6 @@ export const RegisterAuthSchema = z.object({
   email: UserZod.email,
   username: UserZod.username,
   password: UserZod.password,
-  dateBirth: UserZod.dateBirth.optional(),
+  birthDate: UserZod.birthDate.optional(),
   avatar: UserZod.avatar.optional(),
 });

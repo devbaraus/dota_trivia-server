@@ -1,8 +1,8 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
-import { Role } from "@prisma/client";
+import { Role, User } from "@prisma/client";
 
-import { Roles } from "../auth/decorator";
+import { GetUser, Roles } from "../auth/decorator";
 import { JwtGuard } from "../auth/guard";
 import { CreateUserDto, UpdateUserDto } from "./dto";
 import { UserService } from "./user.service";
@@ -13,10 +13,15 @@ import { UserService } from "./user.service";
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  @Get("me")
+  getMe(@GetUser() user: User) {
+    return { ...user, passwordHash: undefined };
+  }
+
   @Roles(Role.ADMIN)
   @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.userService.create(createUserDto);
+  create(@Body() dto: CreateUserDto) {
+    return this.userService.create(dto);
   }
 
   @Get()
@@ -30,8 +35,8 @@ export class UserController {
   }
 
   @Put(":id")
-  update(@Param("id") id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.update(Number(id), updateUserDto);
+  update(@Param("id") id: string, @Body() dto: UpdateUserDto) {
+    return this.userService.update(+id, dto);
   }
 
   @Delete(":id")

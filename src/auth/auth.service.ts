@@ -9,9 +9,9 @@ import { PrismaService } from "../prisma/prisma.service";
 @Injectable()
 export class AuthService {
   constructor(
-    private prismaService: PrismaService,
-    private jwt: JwtService,
-    private config: ConfigService,
+    private readonly prismaService: PrismaService,
+    private readonly jwt: JwtService,
+    private readonly config: ConfigService,
   ) {}
 
   async signIn(username: string, password: string): Promise<any> {
@@ -36,7 +36,6 @@ export class AuthService {
     const token = this.jwt.sign(
       {
         sub: user.id,
-        username: user.username,
         email: user.email,
       },
       {
@@ -49,7 +48,7 @@ export class AuthService {
 
     return {
       user: result,
-      access_token: token,
+      accessToken: token,
     };
   }
 }

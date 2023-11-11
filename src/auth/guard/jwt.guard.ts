@@ -6,16 +6,16 @@ import { AuthGuard } from "@nestjs/passport";
 import { Role } from "@prisma/client";
 import { Request } from "express";
 
-import { UserRepository } from "../../user/user.repository";
+import { PrismaService } from "../../prisma/prisma.service";
 import { IS_PUBLIC_KEY, ROLES_KEY } from "../decorator";
 
 @Injectable()
 export class JwtGuard extends AuthGuard("jwt") {
   constructor(
-    private reflector: Reflector,
-    private jwtService: JwtService,
-    private userRepository: UserRepository,
-    private config: ConfigService,
+    private readonly reflector: Reflector,
+    private readonly jwtService: JwtService,
+    private readonly prismaService: PrismaService,
+    private readonly config: ConfigService,
   ) {
     super();
   }
@@ -38,7 +38,9 @@ export class JwtGuard extends AuthGuard("jwt") {
         secret: this.config.get("JWT_SECRET"),
       });
 
-      request["user"] = await this.userRepository.findOne(payload.sub);
+      request["user"] = await this.prismaService.user.findUnique({
+        where: { id: payload.sub },
+      });
     } catch {
       throw new UnauthorizedException();
     }

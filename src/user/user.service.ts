@@ -10,8 +10,8 @@ import { UserRepository } from "./user.repository";
 @Injectable()
 export class UserService {
   constructor(
-    private userRepository: UserRepository,
-    private config: ConfigService,
+    private readonly userRepository: UserRepository,
+    private readonly config: ConfigService,
   ) {}
 
   async create(dto: RegisterAuthType) {

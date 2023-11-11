@@ -3,7 +3,7 @@ import { INestApplication } from "@nestjs/common";
 
 import { PrismaService } from "../src/prisma/prisma.service";
 
-export const AuthTest = (app: INestApplication, prisma: PrismaService, pactum: any) =>
+export const AuthSpec = (app: INestApplication, prisma: PrismaService, pactum: any) =>
   describe("Auth Controller (e2e)", () => {
     const UserRegisterFactory = () => ({
       email: faker.internet.email(),
@@ -11,7 +11,7 @@ export const AuthTest = (app: INestApplication, prisma: PrismaService, pactum: a
         length: 10,
       }),
       username: faker.internet.userName(),
-      dateBirth: faker.date
+      birthDate: faker.date
         .past({
           years: 18,
         })
@@ -66,7 +66,7 @@ export const AuthTest = (app: INestApplication, prisma: PrismaService, pactum: a
           .post("/auth/register")
           .withJson({
             ...UserRegisterFactory(),
-            dateBirth: faker.date.past().toISOString(),
+            birthDate: faker.date.past().toISOString(),
           })
           .expectStatus(400)
           .toss();
@@ -78,7 +78,7 @@ export const AuthTest = (app: INestApplication, prisma: PrismaService, pactum: a
           .post("/auth/register")
           .withJson({
             ...UserRegisterFactory(),
-            dateBirth: faker.date.future().toISOString().slice(0, 10),
+            birthDate: faker.date.future().toISOString().slice(0, 10),
           })
           .expectStatus(400)
           .toss();
@@ -164,7 +164,7 @@ export const AuthTest = (app: INestApplication, prisma: PrismaService, pactum: a
           .post("/auth/register")
           .withJson({
             ...UserRegisterFactory(),
-            dateBirth: undefined,
+            birthDate: undefined,
           })
           .expectStatus(201)
           .toss();

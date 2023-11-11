@@ -5,7 +5,7 @@ import { PrismaService } from "../prisma/prisma.service";
 
 @Injectable()
 export class UserRepository {
-  constructor(private prismaService: PrismaService) {}
+  constructor(private readonly prismaService: PrismaService) {}
 
   private omitPasswordHash(user: User) {
     const { passwordHash, ...userWithoutPasswordHash } = user;

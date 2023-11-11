@@ -1,10 +1,10 @@
 import { AbilityBuilder, AbilityClass, ExtractSubjectType, InferSubjects, PureAbility } from "@casl/ability";
 import { Injectable } from "@nestjs/common";
-import { Role, User } from "@prisma/client";
+import { EmojiHeroGame, Game, Match, MatchTry, Role, User } from "@prisma/client";
 
 import { Action } from "./enum";
 
-type Subjects = InferSubjects<User> | "all";
+type Subjects = InferSubjects<User | Match | MatchTry | EmojiHeroGame | Game> | "all";
 
 export type AppAbility = PureAbility<[Action, Subjects]>;
 

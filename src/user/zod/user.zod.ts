@@ -6,7 +6,7 @@ export const UserZod = {
   email: z.string().email(),
   username: z.string().min(3).max(32),
   password: z.password().min(8).max(32),
-  dateBirth: z
+  birthDate: z
     .dateString()
     .format("date")
     .refine(date => parse(date, "yyyy-MM-dd", new Date()) < new Date())
